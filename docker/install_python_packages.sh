@@ -1,5 +1,5 @@
 pip install --no-cache-dir -U \
-pandas \
+pandas==0.18.0 \
 numexpr \
-pysam \
+pysam==0.9.0 \
 cutadapt
