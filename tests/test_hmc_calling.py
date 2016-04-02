@@ -2,6 +2,7 @@ import unittest
 from pandas.util.testing import assert_frame_equal
 import pandas as pd
 import hmc_calling
+import os
 
 class TestHmc_calling(unittest.TestCase):
     def test_mirror_seq_conversion(self):
@@ -26,6 +27,17 @@ class TestHmc_calling(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             hmc_calling.mirror_seq_conversion(df)
+
+    def setUp(self):
+        import tempfile
+
+        self.data_folder = os.path.join(os.path.dirname(__file__), 'data')
+        self.temp_dir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        import shutil
+
+        shutil.rmtree(self.temp_dir)
 
 if __name__=='__main__':
     unittest.main()

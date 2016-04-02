@@ -6,10 +6,6 @@ BISMARK_METH_CODE_TYPE_MAP = {
     "Z": "CpG",
     "z": "CpG",
 }
-CALLING_TYPES = (
-    'normal',
-    'mirror',
-)
 
 def meth_call_for_read(read, overlap=True, min_qual=20):
     ''' Do methyltaion calling per read.
@@ -124,7 +120,7 @@ def meth_call_by_region(bam_filename, chrom=None, start=None, end=None):
         result_df['chrom'] = result_df['chrom'].replace(tid_chrom_d)
     return result_df
 
-def write_meth_data_by_regions(bam_filename, out_dir, regions, calling_type='normal', rand_str=''):
+def write_meth_data_by_regions(bam_filename, out_dir, regions, rand_str=''):
     ''' Write the region methylation calling DataFrame into a HDF5 file.
 
     Parameters
@@ -135,9 +131,6 @@ def write_meth_data_by_regions(bam_filename, out_dir, regions, calling_type='nor
         The ouput directory of HDF5 file.
     regions : List of tuples
         A list of (chromosome, start, end).
-    calling_type : str, optional
-        If it is "mirror", the function call "mirror_seq_conversion" function for
-        CpG DataFrame.
     rand_str : str, optional
         Add the rand_str in the prefix to tempfiles.
 
@@ -164,7 +157,7 @@ def write_meth_data_by_regions(bam_filename, out_dir, regions, calling_type='nor
             tmp_df = tmp_df[['chrom', 'pos', 'strand', 'meth_count', 'total_count']]
             tmp_df = tmp_df.reset_index(drop=True)
             # Mirror-seq can only detect CpGs so do not convert non-CpGs.
-            if calling_type=='mirror' and meth_code=='Z':
+            if meth_code=='Z':
                 mirror_seq_conversion(tmp_df)
 
             prefix = 'tmp_{0}_'.format(rand_str)
@@ -284,6 +277,7 @@ def parse_to_bed(hdf_filename, bed_filename, table_name='sites', chunksize=10000
         bed_filename,
         "-o", bed_filename,
     ))
+    subprocess.check_call(('pigz', bed_filename))
 
 def mirror_seq_conversion(df):
     import pandas as pd
@@ -296,7 +290,7 @@ def mirror_seq_conversion(df):
     df['strand'] = df['strand'].replace({'+': '--', '-': '++'}).replace({'--': '-', '++': '+'})
     df['meth_count'] = df['total_count'] - df['meth_count']
 
-def merge_n_parse(out_prefix, meth_type, hdf_filenames, max_chrom_len, create_bed_file=True):
+def merge_n_parse(out_prefix, meth_type, hdf_filenames, max_chrom_len, create_bed_file):
     ''' The is a shortcut function, which is easier to be used by multiprocessing.
 
     Parameters
@@ -375,7 +369,7 @@ def get_bs_conv_rate(filenames):
     return bs_conv_rate
 
 
-def main(bam_filename, calling_type, out_prefix, nts_in_regions=100000000):
+def main(bam_filename, out_prefix, nts_in_regions=100000000):
     ''' Run the entire methylation calling.
 
     Parameters
@@ -408,7 +402,7 @@ def main(bam_filename, calling_type, out_prefix, nts_in_regions=100000000):
     for regions in get_regions_chunks(bam_filename, nts_in_regions):
         p.apply_async(
             write_meth_data_by_regions,
-            (bam_filename, out_dir, regions, calling_type, rand_str),
+            (bam_filename, out_dir, regions, rand_str),
         )
     p.close()
     p.join()
@@ -432,22 +426,6 @@ def main(bam_filename, calling_type, out_prefix, nts_in_regions=100000000):
     p.close()
     p.join()
 
-    # bedToBigBed seems use a lot of memory. Do it one by one.
-    for meth_type in meth_type_filenames_dict:
-        bed_filename = '{0}_{1}.bed'.format(out_prefix, meth_type)
-        if os.path.exists(bed_filename):
-            with pd.HDFStore('{0}_{1}.h5'.format(out_prefix, meth_type)) as store:
-                row_count = store.root.sites.table.nrows
-            if row_count < 550000000:
-                subprocess.check_call((
-                    'bedToBigBed',
-                    bed_filename,
-                    chrom_sizes_filename,
-                    '{0}_{1}.bb'.format(out_prefix, meth_type),
-                ))
-            else:
-                subprocess.check_call(('pigz', bed_filename))
-
     # Remove tmp files after everthing is done.
     for hdf_filenames in meth_type_filenames_dict.itervalues():
         for hdf_filename in hdf_filenames:
@@ -467,20 +445,18 @@ if __name__=='__main__':
         help='The BAM filename.'
     )
     parser.add_argument(
-        '-t',
-        dest='calling_type',
-        default=CALLING_TYPES[0],
-        choices=CALLING_TYPES,
-        help='''Specify "mirror" for mirror-seq alignment files,
-        otherwise use the default (normal).'''
-    )
-    parser.add_argument(
         '--nts-in-regions',
         dest='nts_in_regions',
         default=100000000,
         type=int,
         help='''Number of total nucleotides in an iter of regions.
         It is an rough number so it is possible to get more than the number. default is 100M.'''
+    )
+    parser.add_argument(
+        '--bed',
+        dest='create_bed_file',
+        action='store_true',
+        help='If set, create a gzipped bed file for genomer browser.'
     )
     parser.add_argument(
         '-o',
@@ -497,7 +473,7 @@ if __name__=='__main__':
         out_prefix = os.path.splitext(args.bam_filename)[0]
     main(
         args.bam_filename,
-        args.calling_type,
         out_prefix,
         args.nts_in_regions,
+        args.create_bed_file,
     )
