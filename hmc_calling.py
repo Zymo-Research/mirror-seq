@@ -218,6 +218,25 @@ def get_regions_chunks(bam_filename, nts_in_regions=100000000):
     if regions:
         yield regions
 
+def parse_to_txt(hdf_filename, csv_filename, table_name='sites', chunksize=1000000):
+    ''' Parse the standard output format (HDF5) to tab-separated format.
+
+    Parameters
+    ----------
+    hdf_filename : str
+        The HDF5 filename.
+    csv_filename : str
+        The output csv filename.
+    table_name : str, optional
+        The table name of the dataframe.
+    chunksize : int, optional
+        The chunk size per read_hdf.
+    '''
+    import pandas as pd
+    import numpy as np
+    import subprocess
+    import os
+
 def parse_to_bed(hdf_filename, bed_filename, table_name='sites', chunksize=1000000):
     ''' Parse the standard output format (HDF5) to conventional sqlite3 format.
 
@@ -415,21 +434,25 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
     p.close()
     p.join()
 
+    cpg_h5_filename = '{}_CpG.h5'.format(out_prefix)
+    chg_h5_filename = '{}_CHG.h5'.format(out_prefix)
+    chh_h5_filename = '{}_CHH.h5'.format(out_prefix)
+    csv_filename = '{}_CpG.csv.gz'.format(out_prefix)
     # Calculate bisulfite conversion rate.
     conversion_rate = get_bs_conv_rate([
-        '{}_CHG.h5'.format(out_prefix),
-        '{}_CHH.h5'.format(out_prefix)
+        chg_h5_filename,
+        chh_h5_filename,
     ])
-    print('Bisuflite conversion rate: {:.2%}'.format(conversion_rate))
-    # Create tab-separated files.
-
+    print('Bisuflite conversion rate: {:%}'.format(conversion_rate))
+    # Create csv file.
+    pd.read_hdf(cpg_h5_filename, 'sites').to_csv(csv_filename, index=False, compression='gzip')
     # Remove tmp files after everthing is done.
     for hdf_filenames in meth_type_filenames_dict.itervalues():
         for hdf_filename in hdf_filenames:
             os.remove(hdf_filename)
-    os.remove('{}_CpG.h5'.format(out_prefix))
-    os.remove('{}_CHG.h5'.format(out_prefix))
-    os.remove('{}_CHH.h5'.format(out_prefix))
+    os.remove(cpg_h5_filename)
+    os.remove(chg_h5_filename)
+    os.remove(chh_h5_filename)
     print('Done!')
 
 if __name__=='__main__':
