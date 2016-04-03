@@ -83,6 +83,7 @@ def meth_call_by_region(bam_filename, chrom=None, start=None, end=None):
     import pysam
     import numpy as np
 
+    print 'Working on {}:{}-{}'.format(chrom, start, end)
     with pysam.AlignmentFile(bam_filename) as samfile:
         tid_chrom_d = {i: d['SN'] for i, d in enumerate(samfile.header['SQ'])}
         # Values are tuples of meth_count and totoal counts.
@@ -110,12 +111,12 @@ def meth_call_by_region(bam_filename, chrom=None, start=None, end=None):
         )
         result_df.reset_index(inplace=True)
         result_df['chrom'] = result_df['chrom'].astype(np.uint32)
-        result_df.sort(['chrom', 'pos', 'strand'], inplace=True)
+        result_df.sort_values(['chrom', 'pos', 'strand'], inplace=True)
         if start!=None:
-            idx_start = result_df['pos'].searchsorted(start, 'left')
+            idx_start = result_df['pos'].searchsorted(start, 'left')[0]
             result_df = result_df[idx_start:]
         if end!=None:
-            idx_end = result_df['pos'].searchsorted(end, 'right')
+            idx_end = result_df['pos'].searchsorted(end, 'right')[0]
             result_df = result_df[:idx_end]
         result_df['chrom'] = result_df['chrom'].replace(tid_chrom_d)
     return result_df
@@ -316,20 +317,9 @@ def merge_n_parse(out_prefix, meth_type, hdf_filenames, max_chrom_len, create_be
         )
         del df
 
-    if create_bed_file:
+    if meth_type=='CpG' and create_bed_file:
         bed_filename = os.path.splitext(full_hdf_filename)[0]+'.bed'
         parse_to_bed(full_hdf_filename, bed_filename)
-
-def get_chrom_sizes_file(bam_filename, chrom_sizes_filename):
-    ''' Generate the chrom.sizes file from bam file.
-    bam_filename : str
-        The alignment BAM file.
-    '''
-    import pysam
-
-    with pysam.AlignmentFile(bam_filename) as samfile, open(chrom_sizes_filename, 'w') as fw:
-        for d in samfile.header['SQ']:
-            fw.write('{0}\t{1}\n'.format(d['SN'], d['LN']))
 
 def get_bs_conv_rate(filenames):
     '''Calculate the bisulfite conversion rate using CHH and CHG methylation tracks.
@@ -369,7 +359,7 @@ def get_bs_conv_rate(filenames):
     return bs_conv_rate
 
 
-def main(bam_filename, out_prefix, nts_in_regions=100000000):
+def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
     ''' Run the entire methylation calling.
 
     Parameters
@@ -393,8 +383,6 @@ def main(bam_filename, out_prefix, nts_in_regions=100000000):
     out_dir = os.path.dirname(out_prefix)
     rand_str = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
-    chrom_sizes_filename = 'chrom.sizes'
-    get_chrom_sizes_file(bam_filename, chrom_sizes_filename)
     with pysam.AlignmentFile(bam_filename) as samfile:
         max_chrom_len = max([len(d['SN']) for d in samfile.header['SQ']])
 
@@ -409,6 +397,7 @@ def main(bam_filename, out_prefix, nts_in_regions=100000000):
 
     prefix = 'tmp_{0}_'.format(rand_str)
     meth_type_filenames_dict = {}
+
     for filename in os.listdir(out_dir):
         if not filename.startswith(prefix):
             continue
@@ -416,27 +405,39 @@ def main(bam_filename, out_prefix, nts_in_regions=100000000):
         filenames = meth_type_filenames_dict.setdefault(meth_type, [])
         filenames.append(os.path.join(out_dir, filename))
 
+    print('Merge files...')
     p = Pool(min(len(meth_type_filenames_dict), multiprocessing.cpu_count()))
     for meth_type, filenames in meth_type_filenames_dict.iteritems():
         p.apply_async(
             merge_n_parse,
             (out_prefix, meth_type, filenames, max_chrom_len, True),
         )
-
     p.close()
     p.join()
+
+    # Calculate bisulfite conversion rate.
+    conversion_rate = get_bs_conv_rate([
+        '{}_CHG.h5'.format(out_prefix),
+        '{}_CHH.h5'.format(out_prefix)
+    ])
+    print('Bisuflite conversion rate: {:.2%}'.format(conversion_rate))
+    # Create tab-separated files.
 
     # Remove tmp files after everthing is done.
     for hdf_filenames in meth_type_filenames_dict.itervalues():
         for hdf_filename in hdf_filenames:
             os.remove(hdf_filename)
+    os.remove('{}_CpG.h5'.format(out_prefix))
+    os.remove('{}_CHG.h5'.format(out_prefix))
+    os.remove('{}_CHH.h5'.format(out_prefix))
+    print('Done!')
 
 if __name__=='__main__':
     import argparse
     import os
 
     parser = argparse.ArgumentParser(
-        description='Methylation calling for Methyl-seq alignment files.'
+        description='Mirror-seq hydroxymethylation calling from alignment files.'
     )
     parser.add_argument(
         '-b',
@@ -471,9 +472,10 @@ if __name__=='__main__':
         out_prefix = args.out_prefix
     else:
         out_prefix = os.path.splitext(args.bam_filename)[0]
+
     main(
         args.bam_filename,
         out_prefix,
-        args.nts_in_regions,
         args.create_bed_file,
+        args.nts_in_regions,
     )

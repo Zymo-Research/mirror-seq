@@ -7,6 +7,7 @@ apt-get install -y \
     curl \
     zip \
     unzip \
+    libhdf5-dev \
     --no-install-recommends && \
 rm -rf /var/lib/apt/lists/* && \
 apt-get clean autoclean && \
