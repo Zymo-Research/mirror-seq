@@ -18,7 +18,7 @@ RUN bash /tmp/install_bioinfo_packages.sh
 RUN bash /tmp/install_python_packages.sh
 
 ENV PATH=${PATH}:/genomicTools:/bowtie2-2.2.6:/bismark_v0.14.5 \
-  PYTHONPATH=${PYTHONPATH}:/scripts/mirror-seq \
+  PYTHONPATH=${PYTHONPATH}:/scripts/mirror-seq/mirror_seq \
   TERM=xterm
 
 WORKDIR /mnt
