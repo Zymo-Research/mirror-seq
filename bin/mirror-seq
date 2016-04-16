@@ -27,15 +27,14 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
             '-1', read1_filename,
             '-2', read2_filename
         ]
-        bam_filename = '{}_pe.bam'.format(bam_basename)
+        bam_filename = os.path.join(out_dir, '{}_pe.bam'.format(bam_basename))
     else:
         bismark_cmd += [read1_filename]
-        bam_filename = '{}_se.bam'.format(bam_basename)
+        bam_filename = os.path.join(out_dir, '{}_se.bam'.format(bam_basename))
 
     bismark_cmd = map(str, bismark_cmd)
     subprocess.check_call(bismark_cmd)
 
-    bam_filename = ''
     out_prefix = os.path.splitext(bam_filename)[0]
     hmc_calling.main(bam_filename, out_prefix, create_bed_file, nts_in_regions)
 
