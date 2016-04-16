@@ -9,11 +9,13 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
     # trimming.main(read1_filename, read2_filename, out_dir, no_adapter_trimming=False,
     #     read_len=None, adapter1, adapter2)
 
+    bam_basename = os.path.splitext(os.path.basename(read1_filename))[0]
     bismark_cmd = [
         'bismark',
         '-X', maxins,
         '-o', out_dir,
         '--temp_dir', out_dir,
+        '-B', bam_basename,
     ]
     if non_directional:
         bismark_cmd += ['--non_directional']
@@ -25,8 +27,10 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
             '-1', read1_filename,
             '-2', read2_filename
         ]
+        bam_filename = '{}_pe.bam'.format(bam_basename)
     else:
         bismark_cmd += [read1_filename]
+        bam_filename = '{}_se.bam'.format(bam_basename)
 
     bismark_cmd = map(str, bismark_cmd)
     subprocess.check_call(bismark_cmd)
