@@ -445,16 +445,32 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
         chg_h5_filename,
         chh_h5_filename,
     ])
-    print('Bisuflite conversion rate: {:%}'.format(conversion_rate))
+    if conversion_rate is not None:
+        print('Bisuflite conversion rate: {:%}'.format(conversion_rate))
+    else:
+        print('Cannot estimate bisuflite conversion rate.')
     # Create csv file.
-    pd.read_hdf(cpg_h5_filename, 'sites').to_csv(csv_filename, index=False, compression='gzip')
+    if os.path.exists(cpg_h5_filename):
+        pd.read_hdf(cpg_h5_filename, 'sites').to_csv(csv_filename, index=False, compression='gzip')
+    else:
+        print('There is nothing to report.')
     # Remove tmp files after everthing is done.
     for hdf_filenames in meth_type_filenames_dict.itervalues():
         for hdf_filename in hdf_filenames:
             os.remove(hdf_filename)
-    os.remove(cpg_h5_filename)
-    os.remove(chg_h5_filename)
-    os.remove(chh_h5_filename)
+
+    try:
+        os.remove(cpg_h5_filename)
+    except OSError:
+        pass
+    try:
+        os.remove(chg_h5_filename)
+    except OSError:
+        pass
+    try:
+        os.remove(chh_h5_filename)
+    except OSError:
+        pass
     print('Done!')
 
 if __name__=='__main__':
