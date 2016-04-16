@@ -361,14 +361,16 @@ def get_bs_conv_rate(filenames):
 
     '''
     import pandas as pd
+    import os
 
     meth_ratio_sum = 0
     count = 0
 
     for filename in filenames:
-        for df in pd.read_hdf(filename, 'sites', columns=['meth_count', 'total_count'], chunksize=1000000):
-            meth_ratio_sum += (df['meth_count'] / df['total_count']).sum()
-            count += len(df)
+        if os.path.exists(filename):
+            for df in pd.read_hdf(filename, 'sites', columns=['meth_count', 'total_count'], chunksize=1000000):
+                meth_ratio_sum += (df['meth_count'] / df['total_count']).sum()
+                count += len(df)
 
     try:
         bs_conv_rate = 1 - round(meth_ratio_sum / count, 2)
@@ -425,7 +427,7 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
         filenames.append(os.path.join(out_dir, filename))
 
     print('Merge files...')
-    p = Pool(min(len(meth_type_filenames_dict), multiprocessing.cpu_count()))
+    p = Pool()
     for meth_type, filenames in meth_type_filenames_dict.iteritems():
         p.apply_async(
             merge_n_parse,
