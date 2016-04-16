@@ -183,7 +183,7 @@ if __name__=='__main__':
     args = parser.parse_args()
 
     if not args.out_dir:
-        args.out_dir = os.path.splitext(args.read1_filename)
+        args.out_dir = os.path.dirname(args.read1_filename)
 
     if not args.read_len:
         args.read_len = find_read_len(args.read1_filename)

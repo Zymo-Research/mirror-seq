@@ -1,0 +1,127 @@
+#!/usr/bin/env python
+
+def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_folder,
+    maxins, non_directional, create_bed_file, nts_in_regions):
+    import subprocess
+    import os
+    from mirror_seq import trimming, hmc_calling
+
+    # trimming.main(read1_filename, read2_filename, out_dir, no_adapter_trimming=False,
+    #     read_len=None, adapter1, adapter2)
+
+    bismark_cmd = [
+        'bismark',
+        '-X', maxins,
+        '-o', out_dir,
+        '--temp_dir', out_dir,
+    ]
+    if non_directional:
+        bismark_cmd += ['--non_directional']
+
+    bismark_cmd += [genome_folder]
+
+    if read2_filename:
+        bismark_cmd += [
+            '-1', read1_filename,
+            '-2', read2_filename
+        ]
+    else:
+        bismark_cmd += [read1_filename]
+
+    bismark_cmd = map(str, bismark_cmd)
+    subprocess.check_call(bismark_cmd)
+
+    # bam_filename = ''
+    # out_prefix = os.path.splitext(bam_filename)[0]
+    # hmc_calling.main(bam_filename, out_prefix, create_bed_file, nts_in_regions)
+
+
+if __name__ == '__main__':
+    import argparse
+    import os
+
+    parser = argparse.ArgumentParser(
+        description='Mirror-seq analysis tool. From Fastq file to hydroxymethylation calling.'
+    )
+    parser.add_argument(
+        '-1',
+        dest='read1_filename',
+        required=True,
+        help='The read1 fastq filename. Fastq file can be either gzipped or not.'
+    )
+    parser.add_argument(
+        '-2',
+        dest='read2_filename',
+        help='The read2 fastq filename. If single-end, don\'t use this argument. Fastq file can be either gzipped or not.'
+    )
+    parser.add_argument(
+        '-o',
+        dest='out_dir',
+        help='The output directory. Default is the same directory as read1 file.'
+    )
+    parser.add_argument(
+        '-a',
+        dest='adapter1',
+        default='GATCGGAAGAGC',
+        help='The adapter sequence for read 1. Default is true seq adapter (GATCGGAAGAGC).'
+    )
+    parser.add_argument(
+        '-a2',
+        dest='adapter2',
+        help='The adapter sequence for read 2. Default is the same as adapter of read 1.'
+    )
+    parser.add_argument(
+        '-g',
+        dest='genome_folder',
+        required=True,
+        help='''The full path to the folder containing the unmodified reference genome
+as well as the subfolders created by the bismark_genome_preparation
+script (/Bisulfite_Genome/CT_conversion/ and
+Bisulfite_Genome/GA_conversion/). Bismark expects one or more FastA
+files in this folder (file extension: .fa or .fasta). The path to the genome folder
+can be relative or absolute. The path may also be set as '--genome_folder
+/path/to/genome/folder/'.''')
+    parser.add_argument(
+        '-X',
+        dest='maxins',
+        default=500,
+        help='''The maximum insert size for valid paired-end alignments. E.g. if -X 100 is
+specified and a paired-end alignment consists of two 20-bp alignments in
+the proper orientation with a 60-bp gap between them, that alignment is
+considered valid (as long as -I is also satisfied). A 61-bp gap would not be valid in
+that case. Default: 500''')
+    parser.add_argument(
+        '--non_directional',
+        dest='non_directional',
+        action='store_true',
+        help='''The sequencing library was constructed in a non strand-specific manner, alignments
+to all four bisulfite strands will be reported. Default: OFF.
+(The current Illumina protocol for BS-Seq is directional, in which case the strands
+complementary to the original strands are merely theoretical and should not exist in
+reality. Specifying directional alignments (which is the default) will only run 2
+alignment threads to the original top (OT) or bottom (OB) strands in parallel and
+report these alignments. This is the recommended option for sprand-specific
+libraries).''')
+    parser.add_argument(
+        '--bed',
+        dest='create_bed_file',
+        action='store_true',
+        help='If set, create a gzipped bed file for genomer browser.'
+    )
+    parser.add_argument(
+        '--nts-in-regions',
+        dest='nts_in_regions',
+        default=100000000,
+        type=int,
+        help='''Number of total nucleotides in an iter of regions.
+        It is an rough number so it is possible to get more than the number. default is 100M.'''
+    )
+
+    args = parser.parse_args()
+
+    if not args.out_dir:
+        args.out_dir = os.path.dirname(args.read1_filename)
+
+    main(args.read1_filename, args.read2_filename, args.out_dir, args.adapter1,
+        args.adapter2, args.genome_folder, args.maxins, args.non_directional,
+        args.create_bed_file, args.nts_in_regions)
