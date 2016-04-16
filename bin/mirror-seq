@@ -6,8 +6,8 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
     import os
     from mirror_seq import trimming, hmc_calling
 
-    # trimming.main(read1_filename, read2_filename, out_dir, no_adapter_trimming=False,
-    #     read_len=None, adapter1, adapter2)
+    trimming.main(read1_filename, read2_filename, out_dir, no_adapter_trimming=False,
+        read_len=None, adapter1=adapter1, adapter2=adapter2)
 
     bam_basename = os.path.splitext(os.path.basename(read1_filename))[0]
     bismark_cmd = [
@@ -35,9 +35,9 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
     bismark_cmd = map(str, bismark_cmd)
     subprocess.check_call(bismark_cmd)
 
-    # bam_filename = ''
-    # out_prefix = os.path.splitext(bam_filename)[0]
-    # hmc_calling.main(bam_filename, out_prefix, create_bed_file, nts_in_regions)
+    bam_filename = ''
+    out_prefix = os.path.splitext(bam_filename)[0]
+    hmc_calling.main(bam_filename, out_prefix, create_bed_file, nts_in_regions)
 
 
 if __name__ == '__main__':
