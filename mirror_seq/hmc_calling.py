@@ -401,6 +401,7 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
     import os, string, random
     import pandas as pd
 
+    print('Wokring on hydroxymethylation calling...')
     out_dir = os.path.dirname(out_prefix)
     rand_str = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 

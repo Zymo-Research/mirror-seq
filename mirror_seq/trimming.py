@@ -36,7 +36,10 @@ def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_file
         else:
             fw2 = open(out_read2_filename, 'w')
 
-    for read1 in fastq_file1:
+    for i, read1 in enumerate(fastq_file1):
+        if i and i%1000000==0:
+            print('{} reads processed'.format(i))
+
         if fastq_file2:
             read2 = fastq_file2.next()
         else:
@@ -58,6 +61,7 @@ def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_file
         fastq_file2.close()
 
     if out_read1_filename.endswith('.gz'):
+        print('Gziping the files')
         subprocess.check_call(('gzip', fw1.name))
         if out_read2_filename:
             subprocess.check_call(('gzip', fw2.name))
