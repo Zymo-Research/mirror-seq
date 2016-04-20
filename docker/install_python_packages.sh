@@ -1,8 +1,8 @@
 pip install --no-cache-dir -U \
 pandas==0.18.0 \
-numexpr \
+numexpr==2.5.2 \
 pysam==0.9.0 \
-cutadapt
+cutadapt==1.9.1
 
 pip install  --no-cache-dir -U \
-tables
+tables==3.2.2
