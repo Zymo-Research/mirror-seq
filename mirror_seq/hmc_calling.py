@@ -447,7 +447,7 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
         chh_h5_filename,
     ])
     if conversion_rate is not None:
-        print('Bisuflite conversion rate: {:%}'.format(conversion_rate))
+        print('Bisuflite conversion rate: {:.0%}'.format(conversion_rate))
     else:
         print('Cannot estimate bisuflite conversion rate.')
     # Create csv file.
