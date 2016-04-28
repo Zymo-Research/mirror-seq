@@ -19,7 +19,7 @@ RUN pip install mirror_seq
 ADD install_bioinfo_packages.sh /tmp/
 RUN bash /tmp/install_bioinfo_packages.sh
 
-ENV PATH=${PATH}:/genomicTools:/bowtie2-2.2.6:/bismark_v0.14.5:/trim_galore_zip
+ENV PATH=${PATH}:/genomicTools:/bowtie2-2.2.6:/bismark_v0.14.5:/trim_galore_zip \
   TERM=xterm
 
 WORKDIR /workspace
