@@ -4,7 +4,7 @@ exec(open('mirror_seq/version.py').read())
 
 INSTALL_REQUIRES = [
     'pandas==0.18.0',
-    'numexpr==2.5.2',
+    # 'numexpr==2.5.2',
     'pysam==0.9.0',
     'cutadapt==1.9.1',
     'tables==3.2.2',
