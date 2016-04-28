@@ -23,4 +23,4 @@ ENV PATH=${PATH}:/genomicTools:/bowtie2-2.2.6:/bismark_v0.14.5:/trim_galore_zip 
   TERM=xterm
 
 WORKDIR /workspace
-ENTRYPOINT mirror-seq
+ENTRYPOINT ["mirror-seq"]
