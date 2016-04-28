@@ -1,5 +1,5 @@
 import unittest
-import trimming
+from mirror_seq import trimming
 
 class TestTrimming(unittest.TestCase):
     def test_trim_paired_seqs(self):

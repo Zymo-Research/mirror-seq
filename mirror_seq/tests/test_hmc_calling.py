@@ -1,7 +1,7 @@
 import unittest
 from pandas.util.testing import assert_frame_equal
 import pandas as pd
-import hmc_calling
+from mirror_seq import hmc_calling
 import os
 
 class TestHmc_calling(unittest.TestCase):
