@@ -23,7 +23,7 @@ You need to create a workplace directory (`<YOUR WORKPLACE>`) and put the follow
 docker run -it --rm -v <YOUR WORKPLACE>:/workplace \
   zymoresearch/mirror-seq \
   -1 <READ 1 FILENAME> -2 <READ 2 FILENAME> \
-  -g <GENOME INDEX FOLDER NAME>
+  -g <GENOME INDEX FOLDER NAME> --bed
 ```
 
 ## Notes:
