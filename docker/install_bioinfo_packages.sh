@@ -1,8 +1,3 @@
-# Add bedToBigBed and bedSort
-mkdir /genomicTools
-wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedToBigBed -O /genomicTools/bedToBigBed
-wget http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bedSort -O /genomicTools/bedSort
-chmod 755 /genomicTools/*
 # Add Trim Galore! 0.3.7
 curl -L "http://www.bioinformatics.bbsrc.ac.uk/projects/trim_galore/trim_galore_v0.3.7.zip" > trim_galore_v0.3.7.zip
 unzip trim_galore_v0.3.7.zip
