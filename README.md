@@ -1,37 +1,12 @@
 # What is it
-Mirror-seq is a [hydroxymethylation]() (hmc) assay invented by [Zymo Research](http://zymoresearch.com) in genomes using [bisulfite sequencing](). This analysis
+Mirror-seq is a [hydroxymethylation](http://www.zymoresearch.com/epigenetics/dna-hydroxymethylation) (hmc) assay invented by [Zymo Research](http://zymoresearch.com) in genomes using [bisulfite sequencing](http://www.zymoresearch.com/bisulfite-beginner-guide). This analysis
 tool helps biologists to analyze sequencing data. It takes Fastq files from sequencers and generate hydroxymethylation ratio for CpGs.
 
-# What's included
-We provide two way to do analysis.
-
-If you are new or like to do a quick analysis, the **Qucik Start** below is the easiest 1 step to run the analysis. Just type in the command below. You will find results in your workplace in several hours.
-
-If you are the bioinformatics expert or anyone eager to try different parameters, we also provide the mirror-seq specific component of initial fill-in nucleotides trimming () and the final hydroxymethylation calling () as standalone commands. You can plug in your favor QC and adapter trimming software and alignment software with your homemade parameters. Please fellow the **installation** section below for more details.
-
-# Quick Start
-We created a [Docker]() image to solve the dependency problem and you can use either Windows, MacOS, or Linux to run the analysis.
-
-## 0 - Install Docker
-Find your OS and follow the installation instructions of [Windows](https://docs.docker.com/windows/step_one/), [MacOS](https://docs.docker.com/mac/step_one/), or [Linux](https://docs.docker.com/linux/step_one/) from Docker's official website.
-
-## 1 - Run Mirror-seq
-You need to create a workplace directory (`<YOUR WORKPLACE>`) and put the following files inside:
-* Read 1 and Read 2 Fastq files.
-* Bisulfite converted genome index created by Bismark. (We provide [human index](). Unzip the file after downloading.)
-
-Run this command in your console.
-```
-docker run -it --rm -v <YOUR WORKPLACE>:/workplace \
-  zymoresearch/mirror-seq \
-  -1 <READ 1 FILENAME> -2 <READ 2 FILENAME> \
-  -g <GENOME INDEX FOLDER NAME> --bed
-```
-
-## Notes:
-Although it is super easy to run the analysis tool, there are several things you need to know in order to run it smoothly.
-* The alignment part is memory and CPU intensive. [Bismark](http://www.bioinformatics.bbsrc.ac.uk/projects/bismark/), the aligner we used in our tool, suggests at least 5 cores and > 16GB of RAM.
-* Usually Fastq files are several GB with compression. In the first trimming part, the tool may need up to 3X large as the original input. Please make sure your workplace has enough storage space.
+# Where Should I Start
+We provide three level for scientists to use our tool:
+* **Newbies** We have a [small test dataset](https://github.com/Zymo-Research/mirror-seq/wiki/Test-Dataset) for you to play with.
+* **Experieced** Follow the [Quick Start](https://github.com/Zymo-Research/mirror-seq/wiki/Quick-Start) to try it with your own data.
+* **Expert** You have your homebrew bioinformatics software. Just follow the instruction below to install and run the specific parts for Mirror-seq.
 
 # installation
 You need to install the following bioinformatics software below and put them in PATH. `Pip` can install the python package Dependencies for you.
