@@ -4,6 +4,8 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
+install:
+  - pip install .
 # command to install dependencies
 script: python -m unittest mirror_seq/tests/ discover
 branches:
