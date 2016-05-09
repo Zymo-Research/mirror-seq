@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+from mirror_seq import hmc_calling
+
+if __name__=='__main__':
+    import argparse
+    import os
+
+    parser = argparse.ArgumentParser(
+        description='Mirror-seq hydroxymethylation calling from alignment files.'
+    )
+    parser.add_argument(
+        '-b',
+        dest='bam_filename',
+        required=True,
+        help='The BAM filename.'
+    )
+    parser.add_argument(
+        '--nts-in-regions',
+        dest='nts_in_regions',
+        default=100000000,
+        type=int,
+        help='''Number of total nucleotides in an iter of regions.
+        It is an rough number so it is possible to get more than the number. default is 100M.'''
+    )
+    parser.add_argument(
+        '--bed',
+        dest='create_bed_file',
+        action='store_true',
+        help='If set, create a gzipped bed file for genomer browser.'
+    )
+    parser.add_argument(
+        '-o',
+        dest='out_prefix',
+        default=None,
+        help='''The output preifx of all output files. With absolute path is recommended.
+        If None (default), use the pathname of bam file without extension.'''
+    )
+    args = parser.parse_args()
+
+    if args.out_prefix:
+        out_prefix = args.out_prefix
+    else:
+        out_prefix = os.path.splitext(args.bam_filename)[0]
+
+    main(
+        args.bam_filename,
+        out_prefix,
+        args.create_bed_file,
+        args.nts_in_regions,
+    )

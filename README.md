@@ -32,13 +32,13 @@ You need to install the following bioinformatics software in the dependencies an
 We provide three commands for more details of each command, please use `--help`:
 
 ## Trimming
-`mirror-trimming` trims off Mirror-seq specific filled-in nucleotides and also do adapter trimming and quality trimming.
+`mirror-trim` trims off Mirror-seq specific filled-in nucleotides and also do adapter trimming and quality trimming.
 
 ### Output file
 * **< PREFIX >_trimmed.fastq** The trimmed fastq file.
 
 ## Hydroxymethylation Calling
-`mirror-calling` calls hydroxymethylation ratios for CpGs from alignment files.
+`mirror-call` calls hydroxymethylation ratios for CpGs from alignment files.
 
 ### Output files
 * **< PREFIX>_CpG.csv.gz** Each row represents a CpG. The columns are:
@@ -47,7 +47,7 @@ We provide three commands for more details of each command, please use `--help`:
   * **strand** Either forward strand or reverse strand.
   * **meth_count** Number of reads aligned at the CpG which are hydroxymethylated.
   * **total_count** The total number of reads aligned at the CpG.
-* **< PREFIX >_CpG.bed.gz** Browser tracks can be loaded in [USCS Genome Browser](http://genome.ucsc.edu/) or [igv](https://www.broadinstitute.org/igv/) to visualize hydroxymethylation data. The standard [BED format](https://genome.ucsc.edu/FAQ/FAQformat.html#format1) with 8 fields. However the name and score columns need more description.
+* **< PREFIX >_CpG.bed.gz** Browser tracks can be loaded in [USCS Genome Browser](http://genome.ucsc.edu/) or [igv](https://www.broadinstitute.org/igv/) to visualize hydroxymethylation data. This is the standard [BED format](https://genome.ucsc.edu/FAQ/FAQformat.html#format1) with 8 fields. The name and score fields need more description.
   * **name** is formatted as < HYDROXYMETHYLATED READ COUNT >/< TOTAL READ COUNT >(< HYDROXYMETHYLATION RATIO >). For example, 0/3(0%) means non of the three reads at the CpG position is hydroxymethylated. The hydroxymethylation ratio is 0%.
   * **score** hydroxymethylation percentage times 1000.
 
