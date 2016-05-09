@@ -1,9 +1,6 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
-  - "3.3"
 
 addons:
   apt:
@@ -13,7 +10,9 @@ addons:
 install:
   - pip install .
 # command to install dependencies
-script: python -m unittest mirror_seq/tests/ discover
+script:
+  - cd mirror_seq/tests/
+  - python -m unittest discover
 branches:
   only:
     - master
