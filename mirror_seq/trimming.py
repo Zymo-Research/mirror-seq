@@ -162,7 +162,7 @@ if __name__=='__main__':
         help='The output directory. Default is the same directory as read1 file.'
     )
     parser.add_argument(
-        '---no-adapter-trimming',
+        '--no-adapter-trimming',
         dest='no_adapter_trimming',
         action='store_true',
         help='If set, the script won\'t do adapter trimming by Trim_galore.'
