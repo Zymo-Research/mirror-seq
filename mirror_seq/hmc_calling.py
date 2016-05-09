@@ -297,7 +297,7 @@ def parse_to_bed(hdf_filename, bed_filename, table_name='sites', chunksize=10000
         bed_filename,
         "-o", bed_filename,
     ))
-    subprocess.check_call(('pigz', bed_filename))
+    subprocess.check_call(('gzip', bed_filename))
 
 def mirror_seq_conversion(df):
     import pandas as pd
