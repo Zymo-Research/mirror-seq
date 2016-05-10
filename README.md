@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://travis-ci.org/Zymo-Research/mirror-seq.svg?branch=master" height="130">
+</p>
+
 # What is it
 Mirror-seq is a [hydroxymethylation](http://www.zymoresearch.com/epigenetics/dna-hydroxymethylation) (hmc) assay invented by [Zymo Research](http://zymoresearch.com) in genomes using [bisulfite sequencing](http://www.zymoresearch.com/bisulfite-beginner-guide). This analysis
 tool helps biologists to analyze sequencing data. It takes Fastq files from sequencers and generate hydroxymethylation ratio for CpGs.

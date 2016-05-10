@@ -420,7 +420,7 @@ def main(bam_filename, out_prefix, create_bed_file, nts_in_regions=100000000):
     prefix = 'tmp_{0}_'.format(rand_str)
     meth_type_filenames_dict = {}
 
-    for filename in os.listdir(out_dir):
+    for filename in os.listdir(os.path.join('.', out_dir)):
         if not filename.startswith(prefix):
             continue
         meth_type = filename.rsplit('_', 1)[-1]

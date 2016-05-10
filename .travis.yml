@@ -8,6 +8,7 @@ addons:
       - libhdf5-serial-dev
 
 install:
+  - pip install coveralls
   - pip install .
 # command to install dependencies
 script:
@@ -16,3 +17,5 @@ script:
 branches:
   only:
     - master
+after_success:
+  coveralls
