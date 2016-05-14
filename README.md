@@ -22,7 +22,6 @@ You need to install the following bioinformatics software in the dependencies an
 ### Python (2.7)
 * [NumPy](http://www.numpy.org/): 1.7.0
 * [pandas](http://pandas.pydata.org/): 0.18.0
-* [numexpr](https://github.com/pydata/numexpr): 2.5.2
 * [pysam](http://pysam.readthedocs.org/en/latest/api.html): 0.9.0
 * [cutadapt](http://cutadapt.readthedocs.org/en/stable/guide.html): 1.9.1
 * [PyTables](http://www.pytables.org/): 3.2.2

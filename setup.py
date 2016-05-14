@@ -24,4 +24,5 @@ setup(name='mirror_seq',
     scripts=['bin/mirror-seq', 'bin/mirror-trim', 'bin/mirror-call'],
     packages=['mirror_seq'],
     install_requires=INSTALL_REQUIRES,
+    classifiers=['Programming Language :: Python :: 2.7'],
     keywords='mirror sequencing next-gen hydroxymethylation bisulfite bioinformatics')
