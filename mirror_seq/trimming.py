@@ -62,9 +62,9 @@ def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_file
 
     if out_read1_filename.endswith('.gz'):
         print('Gziping the files')
-        subprocess.check_call(('gzip', fw1.name))
+        subprocess.check_call(('gzip', '-f', fw1.name))
         if out_read2_filename:
-            subprocess.check_call(('gzip', fw2.name))
+            subprocess.check_call(('gzip', '-f', fw2.name))
 
 def run_trim_galore(read1_filename, read2_filename, out_dir, adapter1, adapter2):
     import subprocess
