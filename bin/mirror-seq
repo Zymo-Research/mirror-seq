@@ -39,8 +39,8 @@ def main(read1_filename, read2_filename, out_dir, adapter1, adapter2, genome_fol
     # Sort and create index file.
     with tempfile.NamedTemporaryFile(suffix='.bam', dir=out_dir, delete=False) as fh:
         subprocess.check_call(('samtools', 'sort', bam_filename, os.path.splitext(fh.name)[0]))
-        os.rename(fh.name, bam_filename)
-        subprocess.check_call(('samtools', 'index', bam_filename))
+    os.rename(fh.name, bam_filename)
+    subprocess.check_call(('samtools', 'index', bam_filename))
 
     out_prefix = os.path.splitext(bam_filename)[0]
     hmc_calling.main(bam_filename, out_prefix, create_bed_file, nts_in_regions)
