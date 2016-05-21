@@ -43,7 +43,7 @@ if __name__=='__main__':
     else:
         out_prefix = os.path.splitext(args.bam_filename)[0]
 
-    main(
+    hmc_calling.main(
         args.bam_filename,
         out_prefix,
         args.create_bed_file,
