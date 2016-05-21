@@ -2,11 +2,6 @@ language: python
 python:
   - "2.7"
 
-addons:
-  apt:
-    packages:
-      - libhdf5-serial-dev
-
 install:
   - pip install coveralls
   - pip install .

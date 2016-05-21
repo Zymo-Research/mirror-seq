@@ -7,10 +7,9 @@ Please visit the GitHub repo (https://github.com/Zymo-Research/mirror-seq) for d
 
 
 INSTALL_REQUIRES = [
-    'pandas==0.18.0',
-    'pysam==0.9.0',
+    'pandas>=0.18.0',
+    'pysam>=0.9.0',
     'cutadapt==1.9.1',
-    'tables==3.2.2',
 ]
 
 setup(name='mirror_seq',

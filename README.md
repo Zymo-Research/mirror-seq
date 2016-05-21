@@ -24,7 +24,6 @@ You need to install the following bioinformatics software in the dependencies an
 * [pandas](http://pandas.pydata.org/): 0.18.0
 * [pysam](http://pysam.readthedocs.org/en/latest/api.html): 0.9.0
 * [cutadapt](http://cutadapt.readthedocs.org/en/stable/guide.html): 1.9.1
-* [PyTables](http://www.pytables.org/): 3.2.2
 
 ### Bioinformatics software
 * [Trim Galore!](http://www.bioinformatics.bbsrc.ac.uk/projects/trim_galore/): 0.3.7
