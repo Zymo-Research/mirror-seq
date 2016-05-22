@@ -1,5 +1,5 @@
-<p align="center">
-    <img src="https://travis-ci.org/Zymo-Research/mirror-seq.svg?branch=master" height="130">
+<p>
+    <img src="https://travis-ci.org/Zymo-Research/mirror-seq.svg?branch=master" height="20">
 </p>
 
 # What is it

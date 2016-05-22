@@ -8,7 +8,7 @@ install:
 # command to install dependencies
 script:
   - cd mirror_seq/tests/
-  - python -m unittest discover
+  - coverage run setup.py test
 branches:
   only:
     - master
