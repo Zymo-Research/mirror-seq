@@ -1,4 +1,31 @@
 def trim_paired_seqs(seq1, qual1, seq2, qual2, read_len):
+    ''' Trim off Mirror-seq filled-in nucleoties. For read 1, trim off the last
+    three nucleotides if they are CGA. For read 2, trim off the first two nucleotides.
+
+    Parameters
+    ----------
+    seq1 : str
+        The read 1 sequence.
+    qual1 : str
+        The quality scores of the read 1 sequence.
+    seq2 : str
+        The read 2 sequence.
+    qual2 : str
+        The quality scores of the read 2 sequence.
+    read_len : int
+        The orignal read length from sequencer.
+
+    Returns
+    -------
+    str
+        The trimmed read 1 sequence.
+    str
+        The tirmmed read 1 quality score.
+    str
+        The trimmed read 2 sequence.
+    str
+        The tirmmed read 2 quality score.
+    '''
     if not seq1 or not qual1:
         raise Exception('seq1 and qual1 are both required.')
     if (seq2==None) ^ (qual2==None):
@@ -16,6 +43,23 @@ def trim_paired_seqs(seq1, qual1, seq2, qual2, read_len):
 
 def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_filename,
     out_read2_filename, read_len):
+    ''' Trim off filled-in nucleotides from read1 and read 2 files.
+
+    Parameters
+    ----------
+    read1_filename : str
+        The read 1 filename in Fastq format with or without gzipped.
+    read2_filename : str
+        The read 2 filename in Fastq format with or without gzipped.
+    out_read1_filename : str
+        The read 1 output filename.
+    out_read2_filename : str
+        The read 2 output filename.
+    read_len : int
+        The orignal read length from sequencer.
+
+    '''
+
     import pysam
     import os
     import gzip
@@ -67,6 +111,22 @@ def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_file
             subprocess.check_call(('gzip', '-f', fw2.name))
 
 def run_trim_galore(read1_filename, read2_filename, out_dir, adapter1, adapter2):
+    '''  Run Trim galore!
+
+    Parameters
+    ----------
+    read1_filename : str
+        The read 1 filename in Fastq format with or without gzipped.
+    read2_filename : str
+        The read 2 filename in Fastq format with or without gzipped.
+    out_dir : str
+        The output directory.
+    adapter1 : str
+        The adapter of read 1.
+    adapter2 : str
+        The adapter of read 2.
+
+    '''
     import subprocess
 
     cmd = [
@@ -89,6 +149,23 @@ def run_trim_galore(read1_filename, read2_filename, out_dir, adapter1, adapter2)
 
 def main(read1_filename, read2_filename, out_dir, no_adapter_trimming, read_len,
     adapter1, adapter2):
+    ''' Run the entire trimming.
+
+    read1_filename : str
+        The read 1 filename in Fastq format with or without gzipped.
+    read2_filename : str
+        The read 2 filename in Fastq format with or without gzipped.
+    out_dir : str
+        The output directory.
+    no_adapter_trimming : bool
+        If set, do not run Trim galore!.
+    read_len : int
+        The orignal read length from sequencer.
+    adapter1 : str
+        The adapter of read 1.
+    adapter2 : str
+        The adapter of read 2.
+    '''
     import subprocess
     import os
 
@@ -128,6 +205,18 @@ def main(read1_filename, read2_filename, out_dir, no_adapter_trimming, read_len,
     print('done!')
 
 def find_read_len(filename):
+    ''' Use the first read to determine read length.
+
+    Parameters
+    ----------
+    filename : str
+        The read Fastq filename.
+
+    Returns
+    -------
+    int
+        Read length.
+    '''
     import os
     import pysam
 
