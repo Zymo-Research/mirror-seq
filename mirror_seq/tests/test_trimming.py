@@ -73,8 +73,8 @@ class TestTrimming(unittest.TestCase):
         gzipped_r2_filename = self.r2_file.name+'.gz'
         out_filename1 = 'out1.fastq.gz'
         out_filename2 = 'out2.fastq.gz'
-        subprocess.check_call(('gzip', '-k', self.r1_file.name))
-        subprocess.check_call(('gzip', '-k', self.r2_file.name))
+        subprocess.check_call(('gzip', self.r1_file.name))
+        subprocess.check_call(('gzip', self.r2_file.name))
 
         with gzip.open(out_filename1, 'w') as fw1, gzip.open(out_filename2, 'w') as fw2:
             trimming.filled_in_paired_end_trimming(gzipped_r1_filename,
@@ -84,8 +84,8 @@ class TestTrimming(unittest.TestCase):
             self.assertEqual(self.trimmed_read1, fw1.read())
             self.assertEqual(self.trimmed_read2, fw2.read())
 
-        subprocess.check_call(('rm', gzipped_r1_filename))
-        subprocess.check_call(('rm', gzipped_r2_filename))
+        subprocess.check_call(('gunzip', gzipped_r1_filename))
+        subprocess.check_call(('gunzip', gzipped_r2_filename))
         subprocess.check_call(('rm', out_filename1))
         subprocess.check_call(('rm', out_filename2))
 
