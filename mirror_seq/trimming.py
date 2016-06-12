@@ -86,11 +86,15 @@ def filled_in_paired_end_trimming(read1_filename, read2_filename, out_read1_file
 
         if fastq_file2:
             read2 = fastq_file2.next()
+            read2_sequence = read2.sequence
+            read2_quality = read2.quality
         else:
             read2 = None
+            read2_sequence = None
+            read2_quality = None
 
         seq1, qual1, seq2, qual2 = trim_paired_seqs(read1.sequence, read1.quality,
-            read2.sequence, read2.quality, read_len)
+            read2_sequence, read2_quality, read_len)
 
         read_name_str1 = ' '.join([read1.name, read1.comment])
         fw1.write('@{}\n{}\n+\n{}\n'.format(read_name_str1, seq1, qual1))
