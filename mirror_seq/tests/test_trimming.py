@@ -107,6 +107,7 @@ class TestTrimming(unittest.TestCase):
             trimming.run_trim_galore(self.r1_file.name, None, out_dir,
                 self.adapter1, self.adapter2)
         except:
+            raise
             self.fail('Trim Galore! failed.')
         finally:
             subprocess.call(('rm', '-r', out_dir))
